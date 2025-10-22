@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Trash, Their Treasure: Treasure Tracker</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light Gray Background */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div id="loading" class="text-center p-8 text-xl text-blue-600 font-semibold hidden">
+        Loading Inventory...
+    </div>
+
+    <!-- Inventory System Title and Header -->
+    <header class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">💎 Treasure Tracker</h1>
+        <p class="text-lg text-gray-600">Inventory Management for Your Trash, Their Treasure</p>
+        <div id="auth-status" class="mt-2 text-sm font-medium text-red-500">Connecting to database...</div>
+    </header>
+
+    <!-- Main Content Area: Form & Dashboard -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Inventory Input Form (Col 1/3) -->
+        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-semibold mb-6 text-indigo-600">Add New Inventory Item</h2>
+            <form id="inventory-form" class="space-y-4">
+                
+                <!-- Item Details Section -->
+                <div class="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                    <h3 class="font-bold text-yellow-800 mb-2">Item Details (Treasure Identification)</h3>
+                    
+                    <input type="text" id="brand" placeholder="Brand (e.g., Apple, Nike)" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    
+                    <input type="text" id="model" placeholder="Model/Style (e.g., iPhone 13, Air Max)" class="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+
+                    <textarea id="description" placeholder="Full Description (Size, Condition, Details)" rows="3" required class="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+
+                    <input type="text" id="color" placeholder="Color" class="w-full p-2 mt-2 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+
+                <!-- Purchase/Cost Details Section -->
+                <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                    <h3 class="font-bold text-green-800 mb-2">Purchase & Cost Details</h3>
+
+                    <label for="purchaseDate" class="block text-sm font-medium text-gray-700">Date of Purchase</label>
+                    <input type="date" id="purchaseDate" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+
+                    <label for="costPaid" class="block text-sm font-medium text-gray-700 mt-2">Cost Paid ($)</label>
+                    <input type="number" id="costPaid" placeholder="e.g., 25.00" required step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                    
+                    <label for="MSRP" class="block text-sm font-medium text-gray-700 mt-2">MSRP / Retail Price ($)</label>
+                    <input type="number" id="MSRP" placeholder="Optional" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+
+                    <div class="flex items-center mt-2 space-x-2">
+                        <input type="checkbox" id="shippingPaid" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                        <label for="shippingPaid" class="text-sm font-medium text-gray-700">Shipping Cost Paid?</label>
+                    </div>
+
+                    <input type="number" id="shippingCostPaid" placeholder="Shipping Cost Paid ($)" value="0.00" step="0.01" class="w-full p-2 mt-1 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                    
+                    <label for="dateReceived" class="block text-sm font-medium text-gray-700 mt-2">Date Received</label>
+                    <input type="date" id="dateReceived" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+
+                </div>
+
+                <!-- Auction/Sales Details Section -->
+                <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                    <h3 class="font-bold text-blue-800 mb-2">Auction/Listing Details</h3>
+
+                    <label for="startingCost" class="block text-sm font-medium text-gray-700">Starting Auction Price ($)</label>
+                    <input type="number" id="startingCost" placeholder="e.g., 50.00" required step="0.01" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+
+                    <label for="status" class="block text-sm font-medium text-gray-700 mt-2">Status</label>
+                    <select id="status" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option value="Inventory">Inventory (Not Listed)</option>
+                        <option value="Listed">Listed on Auction</option>
+                        <option value="Sold">Sold</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Returned">Returned</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full py-3 text-white font-bold rounded-xl shadow-lg transition duration-150 bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                    SAVE TREASURE
+                </button>
+                <div id="message-box" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+            </form>
+        </div>
+
+        <!-- Inventory Dashboard (Col 2/3) -->
+        <div class="lg:col-span-2">
+            <div class="bg-indigo-100 p-6 rounded-xl shadow-lg mb-6">
+                <h2 class="text-2xl font-semibold text-indigo-800">Current Inventory Dashboard</h2>
+                <p class="text-indigo-600">Real-time status of your treasures (Sorted by Date Received)</p>
+            </div>
+            
+            <div id="inventory-list" class="space-y-4">
+                <!-- Inventory Items will be inserted here by JavaScript -->
+                <p class="text-center text-gray-500" id="empty-state">No inventory items saved yet. Start by adding one!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        // Import Firebase components
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, query, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- GLOBAL VARIABLES (Mandatory Canvas Environment Variables) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let userId = null;
+        let inventoryCollectionRef = null;
+
+        // --- Utility Functions ---
+
+        /** Converts a date string (YYYY-MM-DD) to a standard readable format. */
+        function formatReadableDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        /** Simple message box display. */
+        function showMessage(message, isError = false) {
+            const box = document.getElementById('message-box');
+            box.textContent = message;
+            box.classList.remove('hidden', 'bg-red-200', 'text-red-800', 'bg-green-200', 'text-green-800');
+            if (isError) {
+                box.classList.add('bg-red-200', 'text-red-800');
+                console.error(message);
+            } else {
+                box.classList.add('bg-green-200', 'text-green-800');
+            }
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        /** Calculates net profit. Assumes final cost is >= 0 */
+        function calculateNetProfit(item) {
+            const finalCost = parseFloat(item.buyerFinalCost) || 0;
+            const costPaid = parseFloat(item.costPaid) || 0;
+            const shippingCostPaid = parseFloat(item.shippingCostPaid) || 0;
+            const totalCost = costPaid + shippingCostPaid;
+            return (finalCost - totalCost).toFixed(2);
+        }
+
+        /** Calculates Total Cost of Goods Sold (COGS). */
+        function calculateCOGS(item) {
+            const costPaid = parseFloat(item.costPaid) || 0;
+            const shippingCostPaid = parseFloat(item.shippingPaid ? item.shippingCostPaid : 0) || 0;
+            return (costPaid + shippingCostPaid).toFixed(2);
+        }
+
+        // --- Firebase Initialization and Authentication ---
+
+        /** Initializes Firebase app and services. */
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                document.getElementById('auth-status').textContent = 'Error: Firebase config not found.';
+                return;
+            }
+            
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                document.getElementById('auth-status').textContent = `Auth Error: ${error.message}`;
+                return;
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    document.getElementById('auth-status').textContent = `Authenticated User: ${userId.substring(0, 8)}...`;
+                    // Set up the collection reference after auth
+                    const path = `/artifacts/${appId}/users/${userId}/inventory`;
+                    inventoryCollectionRef = collection(db, path);
+                    setupInventoryListener();
+                } else {
+                    document.getElementById('auth-status').textContent = 'Awaiting authentication...';
+                }
+            });
+        }
+
+        // --- Firestore Operations ---
+
+        /** Handles form submission and adds an item to Firestore. */
+        document.getElementById('inventory-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!inventoryCollectionRef) {
+                showMessage('Database connection not ready. Please wait.', true);
+                return;
+            }
+
+            const form = e.target;
+            const itemData = {
+                // Item Details
+                brand: form.brand.value || 'N/A',
+                model: form.model.value || 'N/A',
+                description: form.description.value,
+                color: form.color.value || 'N/A',
+                
+                // Purchase/Cost Details
+                purchaseDate: form.purchaseDate.value,
+                costPaid: parseFloat(form.costPaid.value) || 0,
+                MSRP: parseFloat(form.MSRP.value) || 0,
+                shippingPaid: form.shippingPaid.checked,
+                shippingCostPaid: form.shippingPaid.checked ? (parseFloat(form.shippingCostPaid.value) || 0) : 0,
+                dateReceived: form.dateReceived.value || form.purchaseDate.value,
+                
+                // Auction/Sales Details (Initial values)
+                startingCost: parseFloat(form.startingCost.value) || 0,
+                buyerFinalCost: 0, 
+                shippingNeeded: false,
+                shippingCostCharged: 0,
+                shippingDate: '',
+                
+                // System/Status
+                status: form.status.value,
+                createdAt: new Date().toISOString(),
+                photos: [], // Placeholder for images
+            };
+
+            try {
+                await addDoc(inventoryCollectionRef, itemData);
+                showMessage('Treasure saved successfully!');
+                form.reset();
+                document.getElementById('status').value = 'Inventory'; // Reset status explicitly
+            } catch (error) {
+                showMessage(`Error saving inventory: ${error.message}`, true);
+            }
+        });
+
+        /** Deletes an item from Firestore. */
+        async function deleteItem(docId) {
+            if (!confirm('Are you sure you want to permanently delete this item?')) return;
+            try {
+                await deleteDoc(doc(db, inventoryCollectionRef.path, docId));
+                showMessage('Item deleted successfully!');
+            } catch (error) {
+                showMessage(`Error deleting item: ${error.message}`, true);
+            }
+        }
+
+        // --- Real-time Listener and Rendering ---
+
+        /** Sets up the real-time listener for the inventory collection. */
+        function setupInventoryListener() {
+            if (!inventoryCollectionRef) return;
+            
+            // Get all docs and sort by dateReceived (client-side for simplicity)
+            const q = query(inventoryCollectionRef);
+
+            onSnapshot(q, (snapshot) => {
+                let items = [];
+                snapshot.forEach(doc => {
+                    items.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort items by date received (latest first)
+                items.sort((a, b) => new Date(b.dateReceived) - new Date(a.dateReceived));
+
+                renderInventory(items);
+            }, (error) => {
+                showMessage(`Error loading inventory: ${error.message}`, true);
+            });
+        }
+
+        /** Renders the inventory list in the dashboard. */
+        function renderInventory(items) {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+            
+            if (items.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-500 py-4" id="empty-state">No inventory items saved yet. Start by adding one!</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                const cogs = calculateCOGS(item);
+                const netProfit = calculateNetProfit(item);
+                const profitColor = netProfit >= 0 ? 'text-green-600' : 'text-red-600';
+                
+                const statusColor = {
+                    'Inventory': 'bg-gray-200 text-gray-800',
+                    'Listed': 'bg-yellow-200 text-yellow-800',
+                    'Sold': 'bg-blue-200 text-blue-800',
+                    'Shipped': 'bg-green-200 text-green-800',
+                    'Returned': 'bg-red-200 text-red-800',
+                }[item.status] || 'bg-gray-200 text-gray-800';
+
+                const itemHtml = `
+                    <div id="item-${item.id}" class="bg-white p-4 rounded-xl shadow-md border-b-4 border-indigo-300 transition duration-300 hover:shadow-lg sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 mb-3">
+                            <h3 class="text-xl font-bold text-gray-800 truncate mb-2 sm:mb-0">${item.brand} - ${item.model}</h3>
+                            <span class="px-3 py-1 text-sm font-semibold rounded-full ${statusColor}">${item.status}</span>
+                        </div>
+
+                        <!-- Core Metrics -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500">Total COGS</p>
+                                <p class="text-md font-bold text-gray-700">$${cogs}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Start Price</p>
+                                <p class="text-md font-bold text-indigo-600">$${(item.startingCost || 0).toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Final Sale ($)</p>
+                                <p class="text-md font-bold text-blue-600">$${(item.buyerFinalCost || 0).toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Net Profit</p>
+                                <p class="text-lg font-extrabold ${profitColor}">$${netProfit}</p>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Info (Expandable) -->
+                        <div class="mt-4 text-sm text-gray-600 space-y-1">
+                            <p><span class="font-semibold">Description:</span> ${item.description}</p>
+                            <p><span class="font-semibold">Received:</span> ${formatReadableDate(item.dateReceived)}</p>
+                            <p><span class="font-semibold">Purchased:</span> ${formatReadableDate(item.purchaseDate)} | <span class="font-semibold">Paid:</span> $${(item.costPaid || 0).toFixed(2)}</p>
+                            <p><span class="font-semibold">Shipping Paid (COGS):</span> $${(item.shippingCostPaid || 0).toFixed(2)}</p>
+                        </div>
+
+                        <!-- Action Buttons and Hidden Sales Form (simplified for dashboard view) -->
+                        <div class="flex justify-end space-x-2 mt-4">
+                            <button onclick="document.getElementById('edit-form-dialog-${item.id}').classList.remove('hidden')" class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 text-sm">Edit/Sell</button>
+                            <button onclick="deleteItem('${item.id}')" class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 text-sm">Delete</button>
+                        </div>
+                    </div>
+
+                    <!-- Simplified Edit/Sell Dialog (Modal style) -->
+                    <div id="edit-form-dialog-${item.id}" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto">
+                        <div class="bg-white m-4 md:m-8 p-6 rounded-xl shadow-2xl max-w-lg mx-auto transform transition-all">
+                            <h3 class="text-2xl font-bold text-indigo-700 mb-4">Update Sale/Shipping: ${item.brand}</h3>
+                            <form id="update-form-${item.id}" data-id="${item.id}" class="space-y-3">
+                                
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" class="w-full p-2 border border-gray-300 rounded-lg" required>
+                                    <option value="Inventory" ${item.status === 'Inventory' ? 'selected' : ''}>Inventory (Not Listed)</option>
+                                    <option value="Listed" ${item.status === 'Listed' ? 'selected' : ''}>Listed on Auction</option>
+                                    <option value="Sold" ${item.status === 'Sold' ? 'selected' : ''}>Sold</option>
+                                    <option value="Shipped" ${item.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                    <option value="Returned" ${item.status === 'Returned' ? 'selected' : ''}>Returned</option>
+                                </select>
+                                
+                                <label class="block text-sm font-medium text-gray-700 pt-2">Buyer Final Cost ($)</label>
+                                <input type="number" name="buyerFinalCost" value="${(item.buyerFinalCost || 0).toFixed(2)}" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg">
+                                
+                                <div class="flex items-center pt-2 space-x-2">
+                                    <input type="checkbox" name="shippingNeeded" id="ship-need-${item.id}" ${item.shippingNeeded ? 'checked' : ''} class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <label for="ship-need-${item.id}" class="text-sm font-medium text-gray-700">Shipping Needed/Charged?</label>
+                                </div>
+                                
+                                <label class="block text-sm font-medium text-gray-700">Shipping Cost Charged to Buyer ($)</label>
+                                <input type="number" name="shippingCostCharged" value="${(item.shippingCostCharged || 0).toFixed(2)}" step="0.01" class="w-full p-2 border border-gray-300 rounded-lg">
+                                
+                                <label class="block text-sm font-medium text-gray-700 pt-2">Shipping Date</label>
+                                <input type="date" name="shippingDate" value="${item.shippingDate || ''}" class="w-full p-2 border border-gray-300 rounded-lg">
+
+                                <div class="flex justify-end space-x-3 pt-4">
+                                    <button type="button" onclick="document.getElementById('edit-form-dialog-${item.id}').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+                                    <button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Save Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                list.insertAdjacentHTML('beforeend', itemHtml);
+
+                // Add event listener to the dynamically created update form
+                document.getElementById(`update-form-${item.id}`).addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const docId = e.target.getAttribute('data-id');
+                    const form = e.target;
+                    
+                    const updateData = {
+                        status: form.status.value,
+                        buyerFinalCost: parseFloat(form.buyerFinalCost.value) || 0,
+                        shippingNeeded: form.shippingNeeded.checked,
+                        shippingCostCharged: form.shippingNeeded.checked ? (parseFloat(form.shippingCostCharged.value) || 0) : 0,
+                        shippingDate: form.shippingDate.value || '',
+                    };
+
+                    try {
+                        await updateDoc(doc(db, inventoryCollectionRef.path, docId), updateData);
+                        showMessage('Item updated successfully!');
+                        document.getElementById(`edit-form-dialog-${docId}`).classList.add('hidden');
+                    } catch (error) {
+                        showMessage(`Error updating item: ${error.message}`, true);
+                    }
+                });
+            });
+        }
+
+        // Expose deleteItem to the global scope for use in the onclick handler
+        window.deleteItem = deleteItem;
+
+        // Initialize on page load
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
